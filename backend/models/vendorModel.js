@@ -3,7 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const userShema = new mongoose.Schema({
+const vendorShema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Please enter name']
@@ -26,7 +26,7 @@ const userShema = new mongoose.Schema({
     },
     role: {
         type: String,
-        default: 'user'
+        default: 'vendor'
     },
     resetPasswordToken: String,
     resetPasswordTokenExpire: Date,
@@ -36,20 +36,20 @@ const userShema = new mongoose.Schema({
     }
 })
 
-userShema.pre('save', async function (next) {
+vendorShema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 10)
 })
 
-userShema.methods.getJwtToken = function () {
+vendorShema.methods.getJwtToken = function () {
     return jwt.sign({ id: this.id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_TIME
     })
 }
 
-userShema.methods.isValidPassword = async function (enteredPassword) {
+vendorShema.methods.isValidPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password)
 }
 
-let model = mongoose.model('User', userShema);
+let model = mongoose.model('vendor', vendorShema);
 
 module.exports = model;

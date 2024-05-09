@@ -1,44 +1,44 @@
 const catchAsyncError = require('../middlewares/catchAsyncError');
-const User = require('../models/userModel');
+const Vendor = require('../models/vendorModel');
 const ErrorHandler = require('../utils/errorHandler');
 const sendToken = require('../utils/jwt')
 
-exports.registerUser = catchAsyncError(async (req, res, next) => {
+exports.registerVendor = catchAsyncError(async (req, res, next) => {
     const { name, email, password, avatar } = req.body;
-    const user = await User.create({
+    const vendor = await Vendor.create({
         name,
         email,
         password,
         avatar
     });
 
-    sendToken(user, 201, res);
-})
+    sendToken(vendor, 201, res);
+});
 
-//Login user
-exports.loginUser = catchAsyncError(async (req, res, next) => {
+//Login vendor
+exports.loginVendor = catchAsyncError(async (req, res, next) => {
     const { email, password } = req.body
 
     if (!email || !password) {
         return next(new ErrorHandler('Please enter email & password', 400));
     }
 
-    //finding the user database
-    const user = await User.findOne({ email }).select('+password')
+    //finding the vendor database
+    const vendor = await Vendor.findOne({ email }).select('+password')
 
-    if (!user) {
+    if (!vendor) {
         return next(new ErrorHandler('Invalid email or password ', 401));
     }
 
-    if (!await user.isValidPassword(password)) {
+    if (!await vendor.isValidPassword(password)) {
         return next(new ErrorHandler('Invalid email or password', 401));
     }
 
-    sendToken(user, 201, res);
+    sendToken(vendor, 201, res);
 
 })
 
-exports.logoutUser = (req, res, next) => {
+exports.logoutVendor = (req, res, next) => {
     res.cookie('token', null, {
         expires: new Date(Date.now()),
         httpOnly: true

@@ -1,9 +1,9 @@
 const ErrorHandler = require("../utils/errorHandler");
-const User = require('../models/userModel')
+const Vendor = require('../models/vendorModel')
 const catchAsyncError = require("./catchAsyncError");
 const jwt = require('jsonwebtoken');
 
-exports.isAuthenticateUser = catchAsyncError(async (req, res, next) => {
+exports.isAuthenticateVendor = catchAsyncError(async (req, res, next) => {
     const { token } = req.cookies;
 
     if (!token) {
@@ -11,7 +11,7 @@ exports.isAuthenticateUser = catchAsyncError(async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = await User.findById(decoded.id)
+    req.Vendor = await Vendor.findById(decoded.id)
     next();
 })
 
@@ -19,8 +19,8 @@ exports.isAuthenticateUser = catchAsyncError(async (req, res, next) => {
 /*
 exports.authorizeRoles = (...roles) => {
     return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
-            return next(new ErrorHandler(`Role ${req.user.role} is not allowed`))
+        if (!roles.includes(req.Vendor.role)) {
+            return next(new ErrorHandler(`Role ${req.Vendor.role} is not allowed`))
         }
 
         next();
